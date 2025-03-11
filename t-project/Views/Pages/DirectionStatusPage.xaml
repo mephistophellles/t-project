@@ -1,0 +1,233 @@
+﻿<Page x:Class="t_project.Views.Pages.DirectionStatusPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:t_project.Views.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="550" d:DesignWidth="650" Title="DirectionStatusPage">
+    <Border CornerRadius="10" Padding="10" Background="White">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Заголовок -->
+            <TextBlock Text="Направления | Статусы"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"
+               FontSize="18"
+               FontWeight="Bold"
+               Foreground="#0060AC"/>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Margin="0,10,0,10">
+                <Button Content="Добавить"
+                    Width="120"
+                    Height="40"
+                    FontSize="14"
+                    FontWeight="Bold"
+                    Background="#0060AC"
+                    Foreground="White"
+                    BorderThickness="0"
+                    Click="AddNewRowButton_Click"
+                    Cursor="Hand"/>
+
+                <!-- Поле для поиска -->
+                <Grid>
+                    <TextBox x:Name="SearchTextBox"
+                         Width="200"
+                         Height="40"
+                         Margin="10,0,0,0"
+                         FontSize="14"
+                         FontWeight="Bold"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Center"
+                         VerticalContentAlignment="Center"
+                         TextChanged="SearchTextBox_TextChanged"
+                         GotFocus="SearchTextBox_GotFocus"
+                         LostFocus="SearchTextBox_LostFocus"/>
+                    <TextBlock x:Name="SearchPlaceholder"
+                           Text="Поиск..."
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           Foreground="Gray"
+                           Margin="15,0,0,0"
+                           IsHitTestVisible="False"
+                           FontSize="14"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- Таблица -->
+            <TabControl Grid.Row="2" >
+                <!-- Стиль для TabItem -->
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Background" Value="#0060AC"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Padding" Value="10"/>
+                        <Setter Property="BorderBrush" Value="#0060AC"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabItem">
+                                    <Border Name="Border" 
+                                            Background="{TemplateBinding Background}" 
+                                            BorderBrush="{TemplateBinding BorderBrush}" 
+                                            BorderThickness="{TemplateBinding BorderThickness}" 
+                                            CornerRadius="1" 
+                                            Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter x:Name="ContentSite"
+                                                          VerticalAlignment="Center"
+                                                          HorizontalAlignment="Center"
+                                                          ContentSource="Header"
+                                                          RecognizesAccessKey="True"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#004C7F"/>
+                                            <Setter TargetName="Border" Property="BorderBrush" Value="#003366"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#0077B3"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Resources>
+                <TabItem Header="Направления">
+                    <DataGrid x:Name="DirectionsGrid"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="False"
+                              CanUserSortColumns="True"
+                              VerticalAlignment="Stretch"
+                              Background="White"
+                              RowBackground="White"
+                              AlternatingRowBackground="#F7F7F7"
+                              GridLinesVisibility="None"
+                              HeadersVisibility="Column"
+                              BorderBrush="#DDD"
+                              BorderThickness="0.5"
+                              SelectionMode="Single"
+                              CanUserAddRows="False"
+                              MinHeight="300"
+                              Margin="10"
+                              ItemsSource="{Binding DirectionsView}"
+                              CellEditEnding="DirectionsGrid_CellEditEnding">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Редактировать" Click="EditItem_Click"/>
+                                <MenuItem Header="Удалить" Click="DeleteItem_Click"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+
+                        <DataGrid.Resources>
+                            <!-- Стиль заголовков -->
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#0060AC"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Padding" Value="8"/>
+                                <Setter Property="BorderBrush" Value="LightGray"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                            </Style>
+
+                            <!-- Стиль строк -->
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="Height" Value="50"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+
+                            <!-- Стиль ячеек -->
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                                <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
+                                <Setter Property="TextElement.FontWeight" Value="Bold"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="Padding" Value="3"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </Style>
+                        </DataGrid.Resources>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Наименование направления" Binding="{Binding Direction.NameDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="2*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+
+                <TabItem Header="Статусы">
+                    <DataGrid x:Name="StatusesGrid"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="False"
+                              CanUserSortColumns="True"
+                              VerticalAlignment="Stretch"
+                              Background="White"
+                              RowBackground="White"
+                              AlternatingRowBackground="#F7F7F7"
+                              GridLinesVisibility="None"
+                              HeadersVisibility="Column"
+                              BorderBrush="#DDD"
+                              BorderThickness="0.5"
+                              SelectionMode="Single"
+                              CanUserAddRows="False"
+                              MinHeight="300"
+                              Margin="10"
+                              ItemsSource="{Binding StatusesView}"
+                              CellEditEnding="StatusesGrid_CellEditEnding">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Редактировать" Click="EditItem_Click"/>
+                                <MenuItem Header="Удалить" Click="DeleteItem_Click"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+
+                        <DataGrid.Resources>
+                            <!-- Стиль заголовков -->
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#0060AC"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Padding" Value="8"/>
+                                <Setter Property="BorderBrush" Value="LightGray"/>
+                                <Setter Property="BorderThickness" Value="1"/>
+                            </Style>
+
+                            <!-- Стиль строк -->
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="Height" Value="50"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+
+                            <!-- Стиль ячеек -->
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                                <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
+                                <Setter Property="TextElement.FontWeight" Value="Bold"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="Padding" Value="3"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </Style>
+                        </DataGrid.Resources>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Наименование статуса" Binding="{Binding NameStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="2*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Border>
+</Page>
