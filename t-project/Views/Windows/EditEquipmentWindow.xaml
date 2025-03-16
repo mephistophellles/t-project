@@ -62,8 +62,7 @@
                 <TextBlock Text="Аудитория:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
                 <ComboBox x:Name="RoomComboBox" Grid.Row="3" Grid.Column="1" Margin="0,5"
                           DisplayMemberPath="ShortName"
-                          SelectedValuePath="ShortName"
-                          SelectedValue="{Binding RoomNumber, Mode=TwoWay}" />
+                          SelectedItem="{Binding Equipment.RoomNumber, Mode=TwoWay}" />
 
                 <TextBlock Text="Ответственный:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"/>
                 <TextBox x:Name="ResponsibleTextBox" Grid.Row="4" Grid.Column="1" Margin="0,5"/>
@@ -72,7 +71,11 @@
                 <TextBox x:Name="TemporaryUserTextBox" Grid.Row="5" Grid.Column="1" Margin="0,5"/>
 
                 <TextBlock Text="Направление:" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center"/>
-                <TextBox x:Name="DirectionTextBox" Grid.Row="6" Grid.Column="1" Margin="0,5"/>
+                <ComboBox x:Name="DirectionComboBox"
+                          Grid.Row="6" Grid.Column="1"
+                          Margin="0,5"
+                          DisplayMemberPath="NameDirection"
+                          SelectedItem="{Binding Equipment.Direction, Mode=TwoWay}"/>
 
                 <TextBlock Text="Модель:" Grid.Row="7" Grid.Column="0" VerticalAlignment="Center"/>
                 <TextBox x:Name="ModelTextBox" Grid.Row="7" Grid.Column="1" Margin="0,5"/>
@@ -84,11 +87,9 @@
                 <TextBox x:Name="CommentTextBox" Grid.Row="9" Grid.Column="1" Margin="0,5"/>
 
                 <TextBlock Text="Статус:" Grid.Row="10" Grid.Column="0" VerticalAlignment="Center"/>
-                <ComboBox x:Name="StatusComboBox" Grid.Row="10" Grid.Column="1" Margin="0,5">
-                    <ComboBoxItem Content="Активен"/>
-                    <ComboBoxItem Content="Неисправен"/>
-                    <ComboBoxItem Content="Списан"/>
-                </ComboBox>
+                <ComboBox x:Name="StatusComboBox" Grid.Row="10" Grid.Column="1" Margin="0,5"
+                          DisplayMemberPath="NameStatus"
+                          SelectedItem="{Binding Equipment.Status, Mode=TwoWay}"/>
             </Grid>
         </Border>
 

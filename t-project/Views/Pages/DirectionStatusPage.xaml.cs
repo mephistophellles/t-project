@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -18,6 +19,19 @@ namespace t_project.Views.Pages
         private ICollectionView _statusView;
         private readonly DirectionContext _db;
         private readonly StatusContext _dbstatus;
+
+        private string _searchText = "";
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged(nameof(SearchText));
+                DirectionsView?.Refresh(); // Обновляем отображение при изменении текста
+                StatusesView?.Refresh();
+            }
+        }
 
         public ObservableCollection<Direction> DirectionItems
         {
@@ -49,8 +63,36 @@ namespace t_project.Views.Pages
             InitializeComponent();
             _db = new DirectionContext();
             _dbstatus = new StatusContext();
+
+            // Создаем пустые коллекции
+            _directionList = new ObservableCollection<Direction>();
+            _statusList = new ObservableCollection<Status>();
+
+            _directionView = CollectionViewSource.GetDefaultView(_directionList);
+            DirectionsView.Filter = FilterDirections;
+
+            _statusView = CollectionViewSource.GetDefaultView(_statusList);
+            StatusesView.Filter = FilterStatuses;
+
             _ = LoadDirectionStatusesAsync();
-            DataContext = this;
+            this.DataContext = this;
+        }
+        private bool FilterDirections(object item)
+        {
+            if (item is Direction direction)
+            {
+                return direction.NameDirection.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
+        }
+
+        private bool FilterStatuses(object item)
+        {
+            if (item is Status status)
+            {
+                return status.NameStatus.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
         }
 
         private async Task LoadDirectionStatusesAsync()
@@ -65,7 +107,10 @@ namespace t_project.Views.Pages
 
             // Обновляем представление
             _directionView = CollectionViewSource.GetDefaultView(DirectionItems);
+            _directionView.Refresh(); // Обновление представления
+
             _statusView = CollectionViewSource.GetDefaultView(StatusItems);
+            _statusView.Refresh(); // Обновление представления
         }
 
         private bool DirectionStatusFilter(object item)
@@ -138,6 +183,18 @@ namespace t_project.Views.Pages
             }
             else if (StatusesGrid.SelectedItem is Status selectedStatus)
             {
+                bool isStatusUsed;
+                using (var db = new EquipmentContext())
+                {
+                    isStatusUsed = await db.Equipment.AnyAsync(e => e.Status == selectedStatus.NameStatus);
+                }
+
+                if (isStatusUsed)
+                {
+                    MessageBox.Show("Этот статус используется в других модулях. Удаление может вызвать ошибки!",
+                                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
                 if (MessageBox.Show($"Удалить: {selectedStatus.NameStatus}?", "Удаление", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     _dbstatus.Status.Remove(selectedStatus);
@@ -149,20 +206,23 @@ namespace t_project.Views.Pages
 
         private async void AddNewRowButton_Click(object sender, RoutedEventArgs e)
         {
-            if (DirectionsGrid.IsVisible)
+            if (MainTabControl.SelectedItem is TabItem selectedTab)
             {
-                var newItem = new Direction { NameDirection = "Новое направление" };
-                DirectionItems.Add(newItem);
-                await _db.Direction.AddAsync(newItem);
+                if (selectedTab.Header.ToString() == "Направления")
+                {
+                    var newItem = new Direction { NameDirection = "Новое направление" };
+                    DirectionItems.Add(newItem);
+                    await _db.Direction.AddAsync(newItem);
+                    await _db.SaveChangesAsync();
+                }
+                else if (selectedTab.Header.ToString() == "Статусы")
+                {
+                    var newItem = new Status { NameStatus = "Новый статус" };
+                    StatusItems.Add(newItem);
+                    await _dbstatus.Status.AddAsync(newItem);
+                    await _dbstatus.SaveChangesAsync();
+                }
             }
-            else if (StatusesGrid.IsVisible)
-            {
-                var newItem = new Status { NameStatus = "Новый статус" };
-                StatusItems.Add(newItem);
-                await _dbstatus.Status.AddAsync(newItem);
-            }
-            await _db.SaveChangesAsync();
-            await _dbstatus.SaveChangesAsync();
         }
 
         private async void DirectionsGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)

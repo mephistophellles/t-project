@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -16,39 +15,72 @@ namespace t_project.Views.Windows
     {
         public Equipment Equipment { get; private set; }
         public ObservableCollection<Auditorium> Auditoriums { get; set; }
+        public ObservableCollection<Direction> Directions { get; set; }
+        public ObservableCollection<Status> Statuses { get; set; }
 
         public EditEquipmentWindow(Equipment equipment)
         {
             InitializeComponent();
+
+            DataContext = this; // Устанавливаем контекст данных для привязки
             Equipment = equipment;
 
             // Заполняем поля данными
             NameTextBox.Text = Equipment.Name;
             NumberTextBox.Text = Equipment.EquipmentNumber;
-            RoomComboBox.Text = Equipment.RoomNumber;
+            //RoomComboBox.Text = Equipment.RoomNumber;
             ResponsibleTextBox.Text = Equipment.ResponsibleUser;
             TemporaryUserTextBox.Text = Equipment.TemporaryUser;
-            DirectionTextBox.Text = Equipment.Direction;
             ModelTextBox.Text = Equipment.Model;
             PriceTextBox.Text = Equipment.Price.ToString();
             CommentTextBox.Text = Equipment.Comment;
-            StatusComboBox.Text = Equipment.Status;
+            //StatusComboBox.Text = Equipment.Status;
 
+            LoadData();
             // Загружаем изображение
             LoadImage();
-            LoadAuditoriums(equipment.RoomNumber);
         }
-        private async void LoadAuditoriums(string currentRoom)
+        private void LoadData()
         {
             using (var context = new AuditoriumContext())
             {
-                var auditoriums = await context.Auditorium.ToListAsync();
+                var auditoriums = context.Auditorium.ToList();
                 Auditoriums = new ObservableCollection<Auditorium>(auditoriums);
-                Auditoriums = new ObservableCollection<Auditorium>(await context.Auditorium.ToListAsync());
                 RoomComboBox.ItemsSource = Auditoriums;
-                RoomComboBox.SelectedValue = auditoriums.FirstOrDefault(a => a.ShortName.ToString() == currentRoom)?.ShortName;
+
+                var selectedAuditorium = Auditoriums.FirstOrDefault(a => a.ShortName == Equipment.RoomNumber);
+                if (selectedAuditorium != null)
+                {
+                    RoomComboBox.SelectedItem = selectedAuditorium;
+                }
+            }
+
+            using (var context = new DirectionContext())
+            {
+                var directions = context.Direction.ToList();
+                Directions = new ObservableCollection<Direction>(directions);
+                DirectionComboBox.ItemsSource = Directions;
+
+                var selectedDirection = Directions.FirstOrDefault(d => d.NameDirection == Equipment.Direction);
+                if (selectedDirection != null)
+                {
+                    DirectionComboBox.SelectedItem = selectedDirection;
+                }
+            }
+
+            using (var context = new StatusContext())
+            {
+                var statuses = context.Status.ToList();
+                Statuses = new ObservableCollection<Status>(statuses);
+                StatusComboBox.ItemsSource = Statuses;
+                var selectedStatus = Statuses.FirstOrDefault(c => c.NameStatus == Equipment.Status);
+                if (selectedStatus != null)
+                {
+                    StatusComboBox.SelectedItem = selectedStatus;
+                }
             }
         }
+
         private void LoadImage()
         {
             byte[] imageBytes = null;
@@ -120,10 +152,10 @@ namespace t_project.Views.Windows
             // Сохраняем изменения
             Equipment.Name = NameTextBox.Text;
             Equipment.EquipmentNumber = NumberTextBox.Text;
-            Equipment.RoomNumber = RoomComboBox.SelectedValue?.ToString(); // Сохраняем выбранную аудиторию
+            Equipment.RoomNumber = RoomComboBox.Text; // Сохраняем выбранную аудиторию
             Equipment.ResponsibleUser = ResponsibleTextBox.Text;
             Equipment.TemporaryUser = TemporaryUserTextBox.Text;
-            Equipment.Direction = DirectionTextBox.Text;
+            Equipment.Direction = DirectionComboBox.Text; // Сохраняем выбранное направление
             Equipment.Model = ModelTextBox.Text;
             Equipment.Price = decimal.TryParse(PriceTextBox.Text, out decimal price) ? price : 0;
             Equipment.Comment = CommentTextBox.Text;

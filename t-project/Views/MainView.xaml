@@ -193,7 +193,6 @@
                         </Button.Style>
                     </Button>
 
-                    <!-- Новая кнопка "Аудитории" -->
                     <Button Content="Аудитории"
                             Click="Auditoriums_Click"
                             FontSize="12"
@@ -350,7 +349,83 @@
                             </Style>
                         </Button.Style>
                     </Button>
-
+                    <Button Content="Тип оборудования"
+                            Click="EquipmentType_Click"
+                            FontSize="12"
+                            FontFamily="Montserrat"
+                            Foreground="White"
+                            Cursor="Hand"
+                            Padding="10,5"
+                            Width="130"
+                            Height="30"
+                            BorderThickness="0"
+                            Margin="0,5,0,0">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#0060AC" Offset="0"/>
+                                            <GradientStop Color="#004080" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Width="{TemplateBinding Width}"
+                                                    Height="{TemplateBinding Height}"
+                                                    CornerRadius="8"
+                                                    Background="{TemplateBinding Background}"
+                                                    RenderTransformOrigin="0.5,0.5">
+                                                <Border.RenderTransform>
+                                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                </Border.RenderTransform>
+                                                <ContentPresenter VerticalAlignment="Center"
+                                                                  HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                                <GradientStop Color="#0078D7" Offset="0"/>
+                                                                <GradientStop Color="#0054A0" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <DropShadowEffect BlurRadius="10"
+                          Color="Black"
+                          Opacity="0.3"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                                <GradientStop Color="#004080" Offset="0"/>
+                                                                <GradientStop Color="#002850" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="RenderTransform">
+                                                        <Setter.Value>
+                                                            <ScaleTransform ScaleX="0.95" ScaleY="0.95"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </StackPanel>
                 <Frame x:Name="equipment" Grid.Column="1" NavigationUIVisibility="Hidden"/>
             </Grid>

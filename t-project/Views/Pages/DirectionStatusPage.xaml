@@ -62,7 +62,7 @@
             </StackPanel>
 
             <!-- Таблица -->
-            <TabControl Grid.Row="2" >
+            <TabControl Grid.Row="2" x:Name="MainTabControl">
                 <!-- Стиль для TabItem -->
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
@@ -121,7 +121,7 @@
                               CanUserAddRows="False"
                               MinHeight="300"
                               Margin="10"
-                              ItemsSource="{Binding DirectionsView}"
+                              ItemsSource="{Binding DirectionsView, UpdateSourceTrigger=PropertyChanged}"
                               CellEditEnding="DirectionsGrid_CellEditEnding">
                         <DataGrid.ContextMenu>
                             <ContextMenu>
@@ -161,7 +161,7 @@
                         </DataGrid.Resources>
 
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Наименование направления" Binding="{Binding Direction.NameDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="2*"/>
+                            <DataGridTextColumn Header="Наименование направления" Binding="{Binding NameDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="2*"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>

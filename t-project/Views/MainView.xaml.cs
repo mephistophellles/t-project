@@ -52,5 +52,10 @@ namespace t_project.Views
         {
             equipment.Navigate(new DirectionStatusPage());
         }
+
+        private void EquipmentType_Click(object sender, RoutedEventArgs e)
+        {
+            equipment.Navigate(new TypePage());
+        }
     }
 }
